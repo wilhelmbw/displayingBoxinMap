@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        html, body, #map {
+            width: 76%;
+            height: 100%;
+            padding: 0;
+            margin: 0; 
+        }
+
+        #map {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+
+        #box {
+            position: absolute;
+            display: none;
+            top: 0px;
+            left: 1180px;
+            width: 300px;
+            height: 200px;
+            z-index: 800;
+            background-color: #f0f0f0;
+            border: 2px solid #333;
+            padding: 20px;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <title></title>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="box" class="hidden">
+        <p>Test</p>
+    </div>
+
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Locate.min.js"></script>
+    <script src="js/multi-style-layer.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script>
+        var map = L.map('map', {
+            zoomControl: true,
+            maxZoom: 28,
+            minZoom: 1
+        }).fitBounds([[31.768415940282768, 35.20546911850199], [31.792890299681794, 35.261961775154404]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({ truncate: { length: 30, location: 'smart' } });
+        L.control.locate({ locateOptions: { maxZoom: 19 } }).addTo(map);
+
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
+            opacity: 0.6,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        map.addLayer(layer_OpenStreetMap_0);
+
+        map.createPane('pane_Googleroadmap_1');
+        map.getPane('pane_Googleroadmap_1').style.zIndex = 401;
+        var layer_Googleroadmap_1 = L.tileLayer('http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}', {
+            pane: 'pane_Googleroadmap_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        map.addLayer(layer_Googleroadmap_1);
+
+        map.createPane('pane_Googlesatellite_2');
+        map.getPane('pane_Googlesatellite_2').style.zIndex = 402;
+        var layer_Googlesatellite_2 = L.tileLayer('http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', {
+            pane: 'pane_Googlesatellite_2',
+            opacity: 0.6,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        map.addLayer(layer_Googlesatellite_2);
+
+        // Create a polygon layer (replace this with your polygon coordinates)
+        var polygon = L.polygon([
+        [31.778246900694008, 35.229910399470285],
+[31.778243100694009, 35.229852499470297],
+[31.778289900694009, 35.229849599470306],
+[31.778282600694006, 35.229740999470295],
+[31.778279800693994, 35.229698599470304],
+[31.778272200694001, 35.229699199470289],
+[31.778259500694013, 35.229724399470292],
+[31.778231700694018, 35.229727099470303],
+[31.778215600694022, 35.229704299470299],
+[31.778191900694022, 35.229706499470282],
+[31.778182500694019, 35.229707499470301],
+[31.778174200694007, 35.229736499470292],
+[31.778149300694015, 35.229738999470293],
+[31.778096600694035, 35.229744199470275],
+[31.77807270069404,  35.229746499470288],
+[31.778057100694024, 35.229721199470283],
+[31.778044200694033, 35.229722599470293],
+[31.778043600694016, 35.229714699470279],
+[31.778028000694011, 35.229507599470281],
+[31.778024000694018, 35.229450799470293],
+[31.778084600694012, 35.229447799470279],
+[31.778083300693989, 35.229393399470304],
+[31.778070000693994, 35.229393899470296],
+[31.778019700694006, 35.229395599470287],
+[31.777996200694016, 35.229396399470275],
+[31.777994700694009, 35.229337099470285],
+[31.777992800694019, 35.229291899470297],
+[31.778242000693975, 35.229273099470319],
+[31.778376700693961, 35.229263999470326],
+[31.778400500693966, 35.229262399470329],
+[31.778500500693955, 35.229254199470333],
+[31.778678700693934, 35.22923959947034],
+[31.778681700693944, 35.229290499470345],
+[31.778667800693938, 35.229291599470351],
+[31.778669500693933, 35.22931989947034],
+[31.778619900693943, 35.22932389947033],
+[31.778633600693951, 35.229429999470334],
+[31.778654700693934, 35.229427399470339],
+[31.778693500693961, 35.229613099470342],
+[31.778665000693962, 35.229617099470339],
+[31.778684400693958, 35.229743899470314],
+[31.778634200693968, 35.229754199470335],
+[31.778642600693978, 35.229826299470339],
+[31.778654100693974, 35.22992289947031],
+[31.778663300693985, 35.230029499470312],
+[31.778669500693994, 35.230123399470322],
+[31.778612700693984, 35.230129299470306],
+[31.778627300694016, 35.230335299470312],
+[31.778606600694001, 35.23033709947029],
+[31.77847230069402,  35.230348699470305],
+[31.77843210069403,  35.230303199470306],
+[31.778429200694017, 35.230252799470293],
+[31.778327800694047, 35.230260999470289],
+[31.778325900694028, 35.230225699470282],
+[31.778148500694062, 35.230245799470282],
+[31.778137100694046, 35.230046999470268],
+[31.778112000694033, 35.230014799470283],
+[31.778107500694023, 35.229924899470277],
+[31.778246900694008, 35.229910399470285]
+        ]).addTo(map);
+        polygon.setZIndex(600);
+
+        // Function to handle the click event on the polygon
+        function handlePolygonClick(event) {
+            // Display the "box"
+            var boxElement = document.getElementById("box");
+            boxElement.classList.remove("hidden");
+        }
+
+        // Bind the click event to the polygon
+        polygon.on("click", handlePolygonClick);
+
+        // Add a marker
+        var marker = L.marker([31.778246900694008, 35.229910399470285],
+[31.778243100694009, 35.229852499470297],
+[31.778289900694009, 35.229849599470306],
+[31.778282600694006, 35.229740999470295],
+[31.778279800693994, 35.229698599470304],
+[31.778272200694001, 35.229699199470289],
+[31.778259500694013, 35.229724399470292],
+[31.778231700694018, 35.229727099470303],
+[31.778215600694022, 35.229704299470299],
+[31.778191900694022, 35.229706499470282],
+[31.778182500694019, 35.229707499470301],
+[31.778174200694007, 35.229736499470292],
+[31.778149300694015, 35.229738999470293],
+[31.778096600694035, 35.229744199470275],
+[31.77807270069404,  35.229746499470288],
+[31.778057100694024, 35.229721199470283],
+[31.778044200694033, 35.229722599470293],
+[31.778043600694016, 35.229714699470279],
+[31.778028000694011, 35.229507599470281],
+[31.778024000694018, 35.229450799470293],
+[31.778084600694012, 35.229447799470279],
+[31.778083300693989, 35.229393399470304],
+[31.778070000693994, 35.229393899470296],
+[31.778019700694006, 35.229395599470287],
+[31.777996200694016, 35.229396399470275],
+[31.777994700694009, 35.229337099470285],
+[31.777992800694019, 35.229291899470297],
+[31.778242000693975, 35.229273099470319],
+[31.778376700693961, 35.229263999470326],
+[31.778400500693966, 35.229262399470329],
+[31.778500500693955, 35.229254199470333],
+[31.778678700693934, 35.22923959947034],
+[31.778681700693944, 35.229290499470345],
+[31.778667800693938, 35.229291599470351],
+[31.778669500693933, 35.22931989947034],
+[31.778619900693943, 35.22932389947033],
+[31.778633600693951, 35.229429999470334],
+[31.778654700693934, 35.229427399470339],
+[31.778693500693961, 35.229613099470342],
+[31.778665000693962, 35.229617099470339],
+[31.778684400693958, 35.229743899470314],
+[31.778634200693968, 35.229754199470335],
+[31.778642600693978, 35.229826299470339],
+[31.778654100693974, 35.22992289947031],
+[31.778663300693985, 35.230029499470312],
+[31.778669500693994, 35.230123399470322],
+[31.778612700693984, 35.230129299470306],
+[31.778627300694016, 35.230335299470312],
+[31.778606600694001, 35.23033709947029],
+[31.77847230069402,  35.230348699470305],
+[31.77843210069403,  35.230303199470306],
+[31.778429200694017, 35.230252799470293],
+[31.778327800694047, 35.230260999470289],
+[31.778325900694028, 35.230225699470282],
+[31.778148500694062, 35.230245799470282],
+[31.778137100694046, 35.230046999470268],
+[31.778112000694033, 35.230014799470283],
+[31.778107500694023, 35.229924899470277],
+[31.778246900694008, 35.229910399470285]).addTo(map);
+
+        // Check if the marker is within the polygon
+        var isWithin = polygon.getBounds().contains(marker.getLatLng());
+
+        if (isWithin) {
+            console.log("Marker is within the polygon.");
+        } else {
+            console.log("Marker is outside the polygon.");
+        }
+    </script>
+</body>
+</html>
