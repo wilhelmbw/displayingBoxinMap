@@ -88,30 +88,7 @@
             maxNativeZoom: 19
         });
         map.addLayer(layer_OpenStreetMap_0);
-
-        map.createPane('pane_Googleroadmap_1');
-        map.getPane('pane_Googleroadmap_1').style.zIndex = 401;
-        var layer_Googleroadmap_1 = L.tileLayer('http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}', {
-            pane: 'pane_Googleroadmap_1',
-            opacity: 1.0,
-            attribution: '',
-            minZoom: 1,
-            maxZoom: 28,
-            minNativeZoom: 0,
-            maxNativeZoom: 18
-        });
-        map.addLayer(layer_Googleroadmap_1);
-
-        map.createPane('pane_Googlesatellite_2');
-        map.getPane('pane_Googlesatellite_2').style.zIndex = 402;
-        var layer_Googlesatellite_2 = L.tileLayer('http://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}', {
-            pane: 'pane_Googlesatellite_2',
-            opacity: 0.6,
-            attribution: '',
-            minZoom: 1,
-            maxZoom: 28,
-        });
-        map.addLayer(layer_Googlesatellite_2);
+// Cleared additional layers for debugging. Recommend using "addLayer" with only one layer when you initiate the map. You could add the Leaflet.Control to be able to switch between baselayers.
 
         // Create a polygon layer (replace this with your polygon coordinates)
         var polygon = L.polygon([
@@ -175,17 +152,12 @@
 [31.778107500694023, 35.229924899470277],
 [31.778246900694008, 35.229910399470285]
         ]).addTo(map);
-        polygon.setZIndex(600);
 
-        // Function to handle the click event on the polygon
-        function handlePolygonClick(event) {
-            // Display the "box"
-            var boxElement = document.getElementById("box");
-            boxElement.classList.remove("hidden");
-        }
-
-        // Bind the click event to the polygon
-        polygon.on("click", handlePolygonClick);
+// Bind "box" as Popup. Removed additional Function for polygon click. You can then use Leaflet css id's and classes to style the popup.
+        
+polygon.bindPopup(
+    "<span>popup</span>",
+    {autoPan: false, minWidth:300,maxWidth:350,maxHeight:450});
 
         // Add a marker
         var marker = L.marker([31.778246900694008, 35.229910399470285],
